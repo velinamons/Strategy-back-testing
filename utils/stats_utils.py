@@ -13,23 +13,10 @@ def create_symbol_stats(portfolio) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The symbol stats as a DataFrame.
     """
-    # Get stats without aggregation
     symbol_stats = portfolio.stats(agg_func=None)
 
     return symbol_stats
 
 
-def save_stats_to_csv(symbol_stats: pd.DataFrame, symbols: list[str], strategy_name: str) -> str:
-    """
-    Saves the backtest statistics to a CSV file.
-
-    Args:
-        symbol_stats (pd.DataFrame): The DataFrame containing the backtest stats.
-        symbols (list[str]): List of trading symbols (e.g., ['BTCUSDT', 'ETHUSDT']).
-        strategy_name (str): Name of the strategy used for the backtest.
-
-    """
-    stats_file = create_csv_path(symbols, strategy_name)
-    symbol_stats.to_csv(stats_file, index_label="Metric")
-
-    return stats_file
+def save_stats_to_csv(symbol_stats: pd.DataFrame, path: str) -> None:
+    symbol_stats.to_csv(path, index_label="Metric")

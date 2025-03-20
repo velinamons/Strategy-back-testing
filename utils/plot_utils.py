@@ -7,6 +7,7 @@ from plotly.subplots import make_subplots
 import vectorbt as vbt
 
 from settings import RESULTS_DIR
+from utils.path_utils import create_plot_path
 
 
 def create_multi_asset_result_plot(portfolio: vbt.Portfolio, portfolio_symbols: List[str]) -> go.Figure:
@@ -64,13 +65,9 @@ def _add_symbol_traces(fig: go.Figure, portfolio: vbt.Portfolio, symbol: str, co
     return fig
 
 
-# TODO: make normal path names
-def save_plot_image(fig: go.Figure, symbols: list[str]) -> str:
-    """Saves the given plot figure as a PNG image and returns the file path."""
-
-    plot_path = os.path.join(RESULTS_DIR, f"{'_'.join(symbols)}_plot.png")
-    pio.write_image(fig, plot_path, format="png")
-
-    return plot_path
+def save_multi_plot_image(fig: go.Figure, path: str) -> None:
+    pio.write_image(fig, path, format="png")
 
 
+def save_single_plot_image(portfolio: vbt.Portfolio, path: str) -> None:
+    pio.write_image(portfolio.plot(), path, format="png")

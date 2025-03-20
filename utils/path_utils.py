@@ -54,67 +54,67 @@ def get_parquet_path(symbol: str, interval: str, date: str) -> str:
     return file_path
 
 
-def _construct_plot_path(symbols: list[str], strategy_name: str) -> tuple:
+def _construct_plot_path(symbols: list[str], strategy_name: str, timestamp: str) -> tuple:
     """
     Constructs the plot file directory and filename.
 
     Args:
         symbols (list[str]): List of trading symbols (e.g., ['BTCUSDT', 'ETHUSDT']).
         strategy_name (str): Name of the strategy used for the plot.
+        timestamp (str): Unique timestamp to ensure matching filenames.
 
     Returns:
         tuple: Directory path and full plot file path.
     """
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]  # YYYYMMDD_HHMMSS_mmm
     filename = f"{'_'.join(symbols)}_{strategy_name}_{timestamp}.png"
-
     return RESULTS_DIR, os.path.join(RESULTS_DIR, filename)
 
 
-def create_plot_path(symbols: list[str], strategy_name: str) -> str:
+def create_plot_path(symbols: list[str], strategy_name: str, timestamp: str) -> str:
     """
     Generates and ensures the plot file directory exists.
 
     Args:
         symbols (list[str]): List of trading symbols (e.g., ['BTCUSDT', 'ETHUSDT']).
         strategy_name (str): Name of the strategy used for the plot.
+        timestamp (str): Unique timestamp.
 
     Returns:
         str: Full plot file path.
     """
-    file_dir, file_path = _construct_plot_path(symbols, strategy_name)
+    file_dir, file_path = _construct_plot_path(symbols, strategy_name, timestamp)
     os.makedirs(file_dir, exist_ok=True)
     return file_path
 
 
-def _construct_csv_path(symbols: list[str], strategy_name: str) -> tuple:
+def _construct_csv_path(symbols: list[str], strategy_name: str, timestamp: str) -> tuple:
     """
     Constructs the CSV file directory and filename for backtest statistics.
 
     Args:
         symbols (list[str]): List of trading symbols (e.g., ['BTCUSDT', 'ETHUSDT']).
         strategy_name (str): Name of the strategy used for the backtest.
+        timestamp (str): Unique timestamp.
 
     Returns:
         tuple: Directory path and full CSV file path.
     """
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]  # YYYYMMDD_HHMMSS_mmm
     filename = f"{'_'.join(symbols)}_{strategy_name}_{timestamp}.csv"
-
     return RESULTS_DIR, os.path.join(RESULTS_DIR, filename)
 
 
-def create_csv_path(symbols: list[str], strategy_name: str) -> str:
+def create_csv_path(symbols: list[str], strategy_name: str, timestamp: str) -> str:
     """
     Generates and ensures the CSV file directory exists for backtest stats.
 
     Args:
         symbols (list[str]): List of trading symbols (e.g., ['BTCUSDT', 'ETHUSDT']).
         strategy_name (str): Name of the strategy used for the backtest.
+        timestamp (str): Unique timestamp.
 
     Returns:
         str: Full CSV file path.
     """
-    file_dir, file_path = _construct_csv_path(symbols, strategy_name)
+    file_dir, file_path = _construct_csv_path(symbols, strategy_name, timestamp)
     os.makedirs(file_dir, exist_ok=True)
     return file_path
