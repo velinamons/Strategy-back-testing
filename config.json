@@ -1,0 +1,77 @@
+{
+    "symbols": {
+        "BTCUSDT": {
+            "30m": {
+                "start_date": "2024-01-01",
+                "end_date": "2025-01-01"
+            },
+            "1h": {
+                "start_date": "2024-01-01",
+                "end_date": "2025-01-01"
+            }
+        },
+        "ETHUSDT": {
+            "30m": {
+                "start_date": "2024-01-01",
+                "end_date": "2025-01-01"
+            },
+            "1h": {
+                "start_date": "2024-01-01",
+                "end_date": "2025-01-01"
+            }
+        }
+    },
+    "portfolio": {
+        "params": {
+            "init_cash": {
+                "description": "Starting capital",
+                "default_value": 1000
+            },
+            "fees": {
+                "description": "Trading fees per transaction (e.g. enter 0.001 for 0.1%)",
+                "default_value": 0.001
+            },
+            "slippage": {
+                "description": "Estimated price slippage (e.g. enter 0.0005 for 0.05%)",
+                "default_value": 0.0005
+            },
+            "sl_stop": {
+                "description": "Stop-loss percentage (e.g. enter 0.03 for 3%)",
+                "default_value": 0.03
+            },
+            "tp_stop": {
+                "description": "Take-profit percentage (e.g. enter 0.05 for 5%)",
+                "default_value": 0.05
+            }
+        }
+    },
+
+    "strategies": {
+        "sma_rsi": {
+            "description": "This strategy combines Simple Moving Average and Relative Strength Index indicators",
+            "asset_type": ["single-asset", "multi-asset"],
+            "params": {
+                "short_window": {
+                    "description": "Short moving average window",
+                    "default_value": 10
+                },
+                "long_window": {
+                    "description": "Long moving average window",
+                    "default_value": 50
+                },
+                "rsi_window": {
+                    "description": "RSI calculation period",
+                    "default_value": 14
+                },
+                "rsi_buy": {
+                    "description": "Buy signal threshold for RSI",
+                    "default_value": 30
+                },
+                "rsi_sell": {
+                    "description": "Sell signal threshold for RSI",
+                    "default_value": 70
+                }
+            }
+        }
+    }
+}
