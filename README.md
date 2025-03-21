@@ -27,7 +27,7 @@ Strategy Backtesting Bot is a trading strategy testing framework that allows you
    cp .env.sample .env
    ```
 4. Modify `config.json` to specify symbols and timeframes to preload:
-   ```json
+   ```sh
    {
        "symbols": {
            "BTCUSDT": {
@@ -35,7 +35,7 @@ Strategy Backtesting Bot is a trading strategy testing framework that allows you
                "1h": {"start_date": "2024-01-01", "end_date": "2025-01-01"}
            }
        },
-       "portfolio": { "params": { "init_cash": 1000, "fees": 0.001, "slippage": 0.0005 } }
+       ...
    }
    ```
 
