@@ -6,7 +6,7 @@ from logger.config import logger
 from backtester.data_loader.parquet_loader import load_klines_range
 from backtester.data_preprocessor.column_filter import drop_unused_columns
 from backtester.portfolio import create_portfolio, create_multi_asset_portfolio
-from backtester.strategies.sma_rsi_strategy import strategy_sma_rsi_single, strategy_sma_rsi_multi
+from backtester.strategies import strategies
 from utils.path_utils import create_csv_path, create_plot_path
 from utils.plot_utils import create_multi_asset_result_plot, save_multi_plot_image, save_single_plot_image
 from utils.stats_utils import create_symbol_stats, save_stats_to_csv
@@ -26,16 +26,20 @@ async def run_backtest(
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]
     logger.info(f"Backtest Starting for {asset} on range {start_date} - {end_date}, interval: {selected_interval}: {selected_strategy} with params: {strategy_params}")
     logger.info(f"Portfolio: {portfolio_params}")
-    if isinstance(asset, list) and len(asset) > 0:
-        return await run_backtest_multi(
-            asset, selected_interval, start_date, end_date, selected_strategy, strategy_params, portfolio_params, timestamp
-        )
-    elif isinstance(asset, str):
-        return await run_backtest_single(
-            asset, selected_interval, start_date, end_date, selected_strategy, strategy_params, portfolio_params, timestamp
-        )
-    else:
-        return {"error": "Invalid asset input. Must be a string or a non-empty list."}
+    try:
+        if isinstance(asset, list) and len(asset) > 0:
+            return await run_backtest_multi(
+                asset, selected_interval, start_date, end_date, selected_strategy, strategy_params, portfolio_params, timestamp
+            )
+        elif isinstance(asset, str):
+            return await run_backtest_single(
+                asset, selected_interval, start_date, end_date, selected_strategy, strategy_params, portfolio_params, timestamp
+            )
+        else:
+            return {"error": "Invalid asset input. Must be a string or a non-empty list."}
+    except Exception as e:
+        logger.error(f"Error running backtest: {e}")
+        return {"error": f"Error occurred while running backtest. Check logs for details"}
 
 
 async def run_backtest_single(
@@ -51,15 +55,20 @@ async def run_backtest_single(
     """Runs a single-asset backtest and saves results."""
 
     df = load_klines_range(symbol=symbol, interval=interval, start_date=start_date, end_date=end_date)
-    df = drop_unused_columns(df, ["close"])
+    # TODO: move drop_unusused_columns to strategy function
+    df = drop_unused_columns(df, ["high", "low", "close"])
     df = df.reset_index().set_index("timestamp").drop(columns=["symbol"])
 
-    strategy_mapping = {
-        "sma_rsi": strategy_sma_rsi_single
+    strategy_single_mapping = {
+        "sma_rsi": strategies.strategy_sma_rsi_single,
+        "macd": strategies.strategy_macd_single,
+        "bollinger_bands": strategies.strategy_bollinger_bands_single,
+        "stochastic": strategies.strategy_stochastic_single,
+        "atr_breakout": strategies.strategy_atr_breakout_single
     }
 
-    if strategy_name in strategy_mapping:
-        df = strategy_mapping[strategy_name](df, strategy_params)
+    if strategy_name in strategy_single_mapping:
+        df = strategy_single_mapping[strategy_name](df, strategy_params)
     else:
         return {"error": f"Strategy {strategy_name} not found"}
 
@@ -93,14 +102,19 @@ async def run_backtest_multi(
     df_list = [load_klines_range(symbol=s, interval=interval, start_date=start_date, end_date=end_date) for s in symbols]
     df = pd.concat(df_list)
 
-    df = drop_unused_columns(df, ["close"])
+    df = drop_unused_columns(df, ["high", "low", "close"])
 
-    strategy_mapping = {
-        "sma_rsi": strategy_sma_rsi_multi
+    # TODO: remove duplication, add better strategy management
+    strategy_multi_mapping = {
+        "sma_rsi": strategies.strategy_sma_rsi_multi,
+        "macd": strategies.strategy_macd_multi,
+        "bollinger_bands": strategies.strategy_bollinger_bands_multi,
+        "stochastic": strategies.strategy_stochastic_multi,
+        "atr_breakout": strategies.strategy_atr_breakout_multi
     }
 
-    if strategy_name in strategy_mapping:
-        df = strategy_mapping[strategy_name](df, strategy_params)
+    if strategy_name in strategy_multi_mapping:
+        df = strategy_multi_mapping[strategy_name](df, strategy_params)
     else:
         return {"error": f"Strategy {strategy_name} not found"}
 

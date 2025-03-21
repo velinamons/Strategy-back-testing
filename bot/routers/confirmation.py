@@ -1,3 +1,5 @@
+import csv
+
 from aiogram import Router
 from aiogram.types import Message, FSInputFile
 from aiogram.fsm.context import FSMContext
@@ -5,6 +7,7 @@ from bot.utils.keyboards import kb_main
 from bot.utils.states import SingleBacktestState, MultiBacktestState
 
 from backtester.app import run_backtest
+from utils.bot_utils import format_csv
 
 confirmation_router = Router()
 
@@ -34,21 +37,18 @@ async def handle_multi_backtest_confirmation(message: Message, state: FSMContext
             portfolio_params
         )
 
-        stats_path = result["result_path"]
-        plot_path = result["plot_path"]
+        if "error" in result:
+            await message.answer(result["error"], reply_markup=kb_main)
+        else:
+            plot_path = result["plot_path"]
+            plot_file = FSInputFile(plot_path)
+            await message.answer_photo(plot_file, caption="Backtest Completed!")
 
-        with open(stats_path, 'r') as stats_file:
-            stats_text = stats_file.read()
-
-        plot_file = FSInputFile(plot_path)
-
-        await message.answer_photo(plot_file, caption="Backtest Completed!")
-
-        await message.answer(f"Backtest Results:\n\n{stats_text}")
-
+            stats_path = result["result_path"]
+            result_text = format_csv(stats_path)
+            await message.answer(result_text)
+            await message.answer("Backtest completed successfully!", reply_markup=kb_main)
         await state.clear()
-        await message.answer("Backtest completed successfully!", reply_markup=kb_main)
-
     elif user_choice == "cancel":
         await state.clear()
         await message.answer("Backtest cancelled.", reply_markup=kb_main)
@@ -78,21 +78,19 @@ async def handle_single_backtest_confirmation(message: Message, state: FSMContex
             strategy_params,
             portfolio_params
         )
+        if "error" in result:
+            await message.answer(result["error"], reply_markup=kb_main)
+        else:
+            plot_path = result["plot_path"]
+            plot_file = FSInputFile(plot_path)
+            await message.answer_photo(plot_file, caption="Backtest Completed!")
 
-        stats_path = result["result_path"]
-        plot_path = result["plot_path"]
-
-        with open(stats_path, 'r') as stats_file:
-            stats_text = stats_file.read()
-
-        plot_file = FSInputFile(plot_path)
-
-        await message.answer_photo(plot_file, caption="Backtest Completed!")
-
-        await message.answer(f"Backtest Results:\n\n{stats_text}")
-
+            stats_path = result["result_path"]
+            with open(stats_path, 'r') as stats_file:
+                stats_text = stats_file.read()
+            await message.answer(f"Backtest Results {selected_symbol}:\n\n{stats_text}")
+            await message.answer("Backtest completed successfully!", reply_markup=kb_main)
         await state.clear()
-        await message.answer("Backtest completed successfully!", reply_markup=kb_main)
 
     elif user_choice == "cancel":
         await state.clear()

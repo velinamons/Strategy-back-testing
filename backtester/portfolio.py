@@ -2,6 +2,7 @@ import pandas as pd
 import vectorbt as vbt
 
 
+# TODO: add portfolio param 'size'
 def create_portfolio(df: pd.DataFrame, portfolio_params: dict, freq: str) -> vbt.Portfolio:
     portfolio = vbt.Portfolio.from_signals(
         close=df["close"],

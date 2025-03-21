@@ -161,7 +161,7 @@ async def handle_single_custom_param(message: Message, state: FSMContext):
     param_name = param_list[current_idx]
 
     try:
-        param_value = int(message.text)
+        param_value = float(message.text)
     except ValueError:
         await message.answer("Invalid input. Please enter a valid number.")
         return

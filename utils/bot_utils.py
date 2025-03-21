@@ -1,4 +1,6 @@
 import csv
+
+import pandas as pd
 from aiogram import types
 from aiogram.enums import ParseMode
 from aiogram.types import FSInputFile
@@ -38,3 +40,27 @@ async def send_image(message: types.Message, file_path: str, caption: str = None
     except Exception as e:
         # Handle any errors that occur while sending the image
         await message.answer(f"An error occurred while sending the image: {e}")
+
+
+def format_csv(stats_path: str) -> str:
+    # Read the CSV file
+    df = pd.read_csv(stats_path)
+
+    # Extract column names (metrics)
+    metrics = df.columns.tolist()
+
+    # Initialize result text
+    result_text = "Backtest Results:\n\n"
+
+    # Iterate over each row (each asset's results)
+    for _, row in df.iterrows():
+        asset = row["Metric"]  # The asset name (BTCUSDT, ETHUSDT, etc.)
+        result_text += f"Metric,{asset}\n"
+
+        # Iterate over all metrics (skip "Metric" column itself)
+        for metric in metrics[1:]:
+            result_text += f"{metric},{row[metric]}\n"
+
+        result_text += "\n"  # Add spacing between assets
+
+    return result_text

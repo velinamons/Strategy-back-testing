@@ -72,6 +72,74 @@
                     "default_value": 70
                 }
             }
+        },
+        "macd": {
+            "description": "This strategy uses the Moving Average Convergence Divergence (MACD) to generate buy and sell signals based on crossovers",
+            "asset_type": ["single-asset", "multi-asset"],
+            "params": {
+                "short_window": {
+                    "description": "Short period for MACD calculation",
+                    "default_value": 12
+                },
+                "long_window": {
+                    "description": "Long period for MACD calculation",
+                    "default_value": 26
+                },
+                "signal_window": {
+                    "description": "Signal line period for MACD",
+                    "default_value": 9
+                }
+            }
+        },
+        "bollinger_bands": {
+            "description": "This strategy uses Bollinger Bands to generate buy and sell signals based on price crossing the upper or lower bands",
+            "asset_type": ["single-asset", "multi-asset"],
+            "params": {
+                "window": {
+                    "description": "Window size for Bollinger Bands",
+                    "default_value": 20
+                },
+                "num_std": {
+                    "description": "Number of standard deviations for the upper and lower bands",
+                    "default_value": 2
+                }
+            }
+        },
+        "stochastic": {
+            "description": "This strategy uses the Stochastic Oscillator to identify overbought and oversold conditions",
+            "asset_type": ["single-asset", "multi-asset"],
+            "params": {
+                "k_window": {
+                    "description": "Lookback period for %K calculation",
+                    "default_value": 14
+                },
+                "d_window": {
+                    "description": "Smoothing window for %D line",
+                    "default_value": 3
+                },
+                "stoch_buy": {
+                    "description": "Buy signal threshold for %K",
+                    "default_value": 20
+                },
+                "stoch_sell": {
+                    "description": "Sell signal threshold for %K",
+                    "default_value": 80
+                }
+            }
+        },
+        "atr_breakout": {
+            "description": "This strategy uses the Average True Range to identify breakouts and trend continuation signals",
+            "asset_type": ["single-asset", "multi-asset"],
+            "params": {
+                "atr_window": {
+                    "description": "Window size for ATR calculation",
+                    "default_value": 14
+                },
+                "atr_multiplier": {
+                    "description": "Multiplier for ATR breakout threshold",
+                    "default_value": 1.5
+                }
+            }
         }
     }
 }
